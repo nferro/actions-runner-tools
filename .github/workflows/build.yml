@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   build:
-    # Intentionally `ubuntu-latest`, not the ARC pool this image targets.
+    # Intentionally `ubuntu-latest`, not an ARC pool that may use this image.
     # An image builder must never depend on the image it produces — if a bad
     # push broke the runner pool, we'd be unable to build the fix.
     runs-on: ubuntu-latest
@@ -32,14 +32,14 @@ jobs:
 
       # First publish creates the ghcr package as private. After the first
       # successful run, set visibility to public at
-      # https://github.com/orgs/dotpt-private/packages/container/actions-runner-tools/settings
-      # so the cluster can pull without an imagePullSecret.
+      # https://github.com/users/nferro/packages/container/actions-runner-tools/settings
+      # so consumers can pull without an imagePullSecret.
       - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/dotpt-private/actions-runner-tools:latest
-            ghcr.io/dotpt-private/actions-runner-tools:${{ github.sha }}
+            ghcr.io/nferro/actions-runner-tools:latest
+            ghcr.io/nferro/actions-runner-tools:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

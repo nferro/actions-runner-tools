@@ -1,11 +1,8 @@
-# Custom runner image for the dotpt-linux-dind ARC scale set.
+# Linux runner image for ARC scale sets.
 # Adds the tooling that GitHub-hosted `ubuntu-latest` ships with but that
 # the lean `ghcr.io/actions/actions-runner` base image omits.
 #
 # Built by .github/workflows/build.yml on push to main.
-# Published to ghcr.io/dotpt-private/actions-runner-tools.
-# Consumed by applications/arc-runners-dotpt-linux-dind.yaml in dotpt-private/argocd
-# (containers[0].image).
 
 FROM ghcr.io/actions/actions-runner:latest
 
@@ -33,7 +30,7 @@ RUN set -eux; \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
         > /etc/apt/sources.list.d/github-cli.list; \
     \
-    # Docker buildx + compose plugins (talk to the in-pod dind sidecar)
+    # Docker buildx + compose plugins (talk to an in-pod dind sidecar)
     . /etc/os-release; \
     curl -fsSL "https://download.docker.com/linux/${ID}/gpg" -o /etc/apt/keyrings/docker.asc; \
     chmod a+r /etc/apt/keyrings/docker.asc; \
