@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Weekly rebuild so the baked actions/runner never ages past GitHub's
+    # server-side minimum version (a deprecated runner exits 7, which makes
+    # ARC tear the whole scale set down — see github-runner
+    # arc/INCIDENT-2026-08-19-pool-stall.md).
+    - cron: '20 6 * * 1'
 
 concurrency:
   group: build-${{ github.ref }}
@@ -37,6 +43,9 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
+          # Re-resolve ghcr.io/actions/actions-runner:latest every build;
+          # without this a cached FROM layer can pin a stale runner version.
+          pull: true
           push: true
           tags: |
             ghcr.io/nferro/actions-runner-tools:latest
